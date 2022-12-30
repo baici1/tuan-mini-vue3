@@ -1,15 +1,27 @@
+import { reactive } from '../reactive';
+import { effect } from '../effect';
+/**
+ * @description:数据更新过程测试
+ * 1.reactive函数对数据user进行proxy劫持
+ * 2.调用effect函数，传入用户定义函数
+ * 3.用户定义函数会自执行一次，其内存在对数据的调用，触发了get操作
+ * 4.对数据的调用会触发proxy接触
+ *    4.1如果是触发get,则把当前触发的属性和当前effect绑定
+ *    4.2如果触发set，则把当前属性绑定的effect取出，并调用，使之进行数据更行
+ */
 describe('effect', () => {
   it('happy path', () => {
     const user = reactive({
       age: 10,
-    })
-    let nextAge
+    });
+    let nextAge;
     effect(() => {
-      nextAge = user.age + 1
-    })
-    expect(nextAge).toBe(11)
+      nextAge = user.age + 1;
+    });
+    expect(nextAge).toBe(11);
 
-    user.age++
-    expect(nextAge).toBe(12)
-  })
-})
+    //update
+    user.age++;
+    expect(nextAge).toBe(12);
+  });
+});
