@@ -41,4 +41,38 @@ describe('effect', () => {
     expect(foo).toBe(12);
     expect(r).toBe('foo');
   });
+  /**
+   * @description 调度器，用于处理异步任务
+   * 1. 通过effect的第二个参数给定一个 scheduler 的 fn
+   * 2. effect 会执行 fn
+   * 3. 当响应式对象 set update的时候不会执行fn 而是执行第二个参数 scheduler函数
+   * 4. 然后执行runner的时候，会再次执行 fn
+   */
+  it('scheduler', () => {
+    //
+    let dummy;
+    let run: any;
+    const scheduler = jest.fn(() => {
+      run = runner;
+    });
+    const obj = reactive({ foo: 1 });
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      { scheduler }
+    );
+    expect(scheduler).not.toHaveBeenCalled();
+    expect(dummy).toBe(1);
+    // should be called on first trigger
+    obj.foo++;
+    expect(scheduler).toHaveBeenCalledTimes(1);
+    // should not run yet
+    expect(dummy).toBe(1);
+
+    // manually run 手动执行run
+    run();
+    // should have run
+    expect(dummy).toBe(2);
+  });
 });

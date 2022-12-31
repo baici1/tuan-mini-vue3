@@ -4,7 +4,8 @@
  */
 class ReactiveEffect {
   private _fn: any;
-  constructor(fn) {
+  // tip 在构造函数的参数上使用public等同于创建了同名的成员变量
+  constructor(fn, public scheduler?) {
     this._fn = fn;
   }
   run() {
@@ -47,13 +48,18 @@ export function trigger(target, key) {
   let dep = depsMap.get(key);
   //执行 当前target对象得key字段所存在得依赖
   for (const effect of dep) {
-    effect.run();
+    if (effect.scheduler) {
+      effect.scheduler();
+    } else {
+      effect.run();
+    }
   }
 }
 
 let activeEffect;
-export function effect(fn) {
-  const _effect = new ReactiveEffect(fn);
+export function effect(fn, options: any = {}) {
+  //fn
+  const _effect = new ReactiveEffect(fn, options?.scheduler);
 
   _effect.run();
   //返回run函数得结果,此处需要指明执行得this来源
