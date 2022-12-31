@@ -10,7 +10,8 @@ class ReactiveEffect {
   run() {
     // 暴露当前类型给全局对象
     activeEffect = this;
-    this._fn();
+    //将fn函数最后结果返回
+    return this._fn();
   }
 }
 
@@ -55,4 +56,6 @@ export function effect(fn) {
   const _effect = new ReactiveEffect(fn);
 
   _effect.run();
+  //返回run函数得结果,此处需要指明执行得this来源
+  return _effect.run.bind(_effect);
 }
