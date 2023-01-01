@@ -1,5 +1,5 @@
 import { reactive } from '../reactive';
-import { effect } from '../effect';
+import { effect, stop } from '../effect';
 /**
  * @description:effect测试
  */
@@ -74,5 +74,48 @@ describe('effect', () => {
     run();
     // should have run
     expect(dummy).toBe(2);
+  });
+  /**
+   * @description stop 功能：停止数据响应，只有手动触发run的函数，数据才能够完成响应
+   * 1.没有使用stop，数据会自动更新
+   * 2.使用了stop后。数据停止更新
+   * 3.手动调用effect函数，数据继续开始更新
+   */
+  it('stop', () => {
+    let dummy: unknown;
+    const obj = reactive({ prop: 1 });
+    const runner = effect(() => {
+      dummy = obj.prop;
+    });
+    obj.prop = 2;
+    expect(dummy).toBe(2);
+    // 执行stop 阻止runner的执行
+    stop(runner);
+    obj.prop = 3;
+    expect(dummy).toBe(2);
+
+    // stoped effect should still be manually callable
+    runner();
+    expect(dummy).toBe(3);
+  });
+
+  /**
+   * @description: 调用stop后的回调函数，允许调用stop后可进行其它操作
+   * @param {*} onStop
+   */
+  it('onStop', () => {
+    const obj = reactive({
+      foo: 1,
+    });
+    const onStop = jest.fn();
+    let dummy: number;
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      { onStop }
+    );
+    stop(runner);
+    expect(onStop).toBeCalledTimes(1);
   });
 });
