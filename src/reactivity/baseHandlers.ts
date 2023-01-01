@@ -1,4 +1,5 @@
 import { track, trigger } from './effect';
+import { ReactiveFlags } from './reactive';
 /**
  * @description: 无需重复执行createGetter(),createSetter()等函数，第一次执行进行缓存
  */
@@ -13,6 +14,11 @@ const readonlyGet = createGetter(true);
  */
 function createGetter(isReadonly = false) {
   return function get(target, key) {
+    if (key == ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly;
+    } else if (key == ReactiveFlags.IS_READONLY) {
+      return isReadonly;
+    }
     const res = Reflect.get(target, key);
     if (!isReadonly) {
       // 依赖收集

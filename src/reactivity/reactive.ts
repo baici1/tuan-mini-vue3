@@ -1,5 +1,12 @@
 import { mutableHandlers, readonlyHandlers } from './baseHandlers';
-import { track, trigger } from './effect';
+/**
+ * @description: 某一个状态的标志
+ * @return {*}
+ */
+export const enum ReactiveFlags {
+  IS_REACTIVE = '__v_isReactive',
+  IS_READONLY = '__v_isReadonly',
+}
 
 export function reactive(raw) {
   return createActionObject(raw, mutableHandlers);
@@ -10,6 +17,17 @@ export function reactive(raw) {
  */
 export function readonly(raw) {
   return createActionObject(raw, readonlyHandlers);
+}
+/**
+ * @description: 判断对象是否是reactive类型
+ * @param {*} value
+ */
+export function isReactive(value) {
+  return !!value[ReactiveFlags.IS_REACTIVE];
+}
+
+export function isReadonly(value) {
+  return !!value[ReactiveFlags.IS_READONLY];
 }
 /**
  * @description: 增加可读性，抽离重复代码
