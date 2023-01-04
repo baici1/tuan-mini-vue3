@@ -27,17 +27,25 @@ export function shallowReadonly(raw) {
 }
 
 /**
- * @description: 判断对象是否是reactive类型
+ * @description: 检查一个对象是否是由 reactive() 或 shallowReactive() 创建的代理。
  * @param {*} value
  */
 export function isReactive(value) {
   return !!value[ReactiveFlags.IS_REACTIVE];
 }
-
+/**
+ * @description: 检查传入的值是否为只读对象。
+ */
 export function isReadonly(value) {
   return !!value[ReactiveFlags.IS_READONLY];
 }
-
+/**
+ * @description:检查一个对象是否是由 reactive()、readonly()、shallowReactive() 或 shallowReadonly() 创建的代理。
+ * @param {*} value
+ */
+export function isProxy(value) {
+  return isReactive(value) || isReadonly(value);
+}
 /**
  * @description: 增加可读性，抽离重复代码
  * @param {any} raw
