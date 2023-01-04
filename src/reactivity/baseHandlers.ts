@@ -1,5 +1,6 @@
+import { isObject } from '../shared';
 import { track, trigger } from './effect';
-import { ReactiveFlags } from './reactive';
+import { ReactiveFlags, reactive, readonly } from './reactive';
 /**
  * @description: 无需重复执行createGetter(),createSetter()等函数，第一次执行进行缓存
  */
@@ -20,6 +21,10 @@ function createGetter(isReadonly = false) {
       return isReadonly;
     }
     const res = Reflect.get(target, key);
+    // 如果res是object，应该是继续执行reactive/readonly
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res);
+    }
     if (!isReadonly) {
       // 依赖收集
       track(target, key);
