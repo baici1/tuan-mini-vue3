@@ -91,9 +91,9 @@ describe('effect', () => {
     const runner2 = effect(() => {
       test = obj.prop;
     });
-    // obj.prop = 2;
-    // expect(dummy).toBe(2);
-    // expect(test).toBe(2);
+    obj.prop = 2;
+    expect(dummy).toBe(2);
+    expect(test).toBe(2);
     // 执行stop 阻止runner的执行
     stop(runner);
     // 进行了set操作
