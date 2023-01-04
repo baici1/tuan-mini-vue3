@@ -83,16 +83,25 @@ describe('effect', () => {
    */
   it('stop', () => {
     let dummy: unknown;
+    let test: unknown;
     const obj = reactive({ prop: 1 });
     const runner = effect(() => {
       dummy = obj.prop;
     });
-    obj.prop = 2;
-    expect(dummy).toBe(2);
+    const runner2 = effect(() => {
+      test = obj.prop;
+    });
+    // obj.prop = 2;
+    // expect(dummy).toBe(2);
+    // expect(test).toBe(2);
     // 执行stop 阻止runner的执行
     stop(runner);
-    obj.prop = 3;
+    // 进行了set操作
+    //obj.prop = 3;
+    // bug:当进行get操作时候，会重新收集依赖并触发依赖
+    obj.prop++;
     expect(dummy).toBe(2);
+    expect(test).toBe(3);
 
     // stoped effect should still be manually callable
     runner();

@@ -1,4 +1,7 @@
 import { extend } from './../shared/index';
+// 全局变量
+let activeEffect;
+let shouldTrack;
 /**
  * 构建 ReactiveEffect 类
  * 1.run() 用于执行依赖函数
@@ -17,10 +20,16 @@ class ReactiveEffect {
     this.deps = [];
   }
   run() {
+    //当执行了stop函数后
+    if (!this.active) return this._fn();
+
+    shouldTrack = true;
     // 暴露当前类型给全局对象
     activeEffect = this;
-    //将fn函数最后结果返回
-    return this._fn();
+    //将fn函数最后结果返回 执行fn函数时候，会触发get操作
+    const result = this._fn();
+    shouldTrack = false;
+    return result;
   }
   stop() {
     //设置状态，防止多次无用清空
@@ -52,6 +61,7 @@ const targetMap = new Map();
  * @return {*}
  */
 export function track(target, key) {
+  if (!isTracking()) return;
   //查询路径：traget -> key ->dep（当前target对象得key字段所存在得依赖）
   let depsMap = targetMap.get(target);
   if (!depsMap) {
@@ -63,10 +73,19 @@ export function track(target, key) {
     deps = new Set();
     depsMap.set(key, deps);
   }
-  //当响应式对象没有使用 effect 函数，进行提前返回
-  if (!activeEffect) return;
+  // tip 优化点：当deps中如果存在activeEffect的话，activeEffect.deps是不需要重复添加的
+  if (deps.has(activeEffect)) return;
   deps.add(activeEffect);
   activeEffect.deps.push(deps);
+}
+
+// 判断是否需要收集依赖
+function isTracking() {
+  // //当响应式对象没有使用 effect 函数，进行提前返回
+  // if (!activeEffect) return;
+  // //根据标志决定是否应该收集依赖
+  // if (!shouldTrack) return;
+  return shouldTrack && activeEffect !== undefined;
 }
 /**
  * @description: 触发依赖
@@ -87,7 +106,6 @@ export function trigger(target, key) {
   }
 }
 
-let activeEffect;
 export function effect(fn, options: any = {}) {
   //fn
   const _effect = new ReactiveEffect(fn, options?.scheduler);
