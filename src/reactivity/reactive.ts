@@ -1,4 +1,4 @@
-import { mutableHandlers, readonlyHandlers } from './baseHandlers';
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers';
 /**
  * @description: 某一个状态的标志
  * @return {*}
@@ -19,6 +19,14 @@ export function readonly(raw) {
   return createActionObject(raw, readonlyHandlers);
 }
 /**
+ * @description: shallowReadonly 只把最外层的数据设置为只读模式，深层数据不做要求，非响应式
+ * @param {*} raw
+ */
+export function shallowReadonly(raw) {
+  return createActionObject(raw, shallowReadonlyHandlers);
+}
+
+/**
  * @description: 判断对象是否是reactive类型
  * @param {*} value
  */
@@ -29,6 +37,7 @@ export function isReactive(value) {
 export function isReadonly(value) {
   return !!value[ReactiveFlags.IS_READONLY];
 }
+
 /**
  * @description: 增加可读性，抽离重复代码
  * @param {any} raw
