@@ -73,6 +73,13 @@ export function track(target, key) {
     deps = new Set();
     depsMap.set(key, deps);
   }
+  /**
+   * reactive 的响应式需要靠targetMap，ref的响应式则不需要，对象内部存储
+   * 他们之间有重复功能的代码，进行抽离并复用
+   */
+  trackEffects(deps);
+}
+export function trackEffects(deps) {
   // tip 优化点：当deps中如果存在activeEffect的话，activeEffect.deps是不需要重复添加的
   if (deps.has(activeEffect)) return;
   deps.add(activeEffect);
@@ -80,7 +87,7 @@ export function track(target, key) {
 }
 
 // 判断是否需要收集依赖
-function isTracking() {
+export function isTracking() {
   // //当响应式对象没有使用 effect 函数，进行提前返回
   // if (!activeEffect) return;
   // //根据标志决定是否应该收集依赖
@@ -96,7 +103,14 @@ function isTracking() {
 export function trigger(target, key) {
   let depsMap = targetMap.get(target);
   let deps = depsMap.get(key);
-  //执行 当前target对象得key字段所存在得依赖
+  /**
+   * reactive 的响应式需要靠targetMap，ref的响应式则不需要，对象内部存储
+   * 他们之间有重复功能的代码，进行抽离并复用
+   */
+  triggerEffects(deps);
+}
+export function triggerEffects(deps) {
+  //执行 key字段(reactive对象和ref对象)所存在得依赖
   for (const effect of deps) {
     if (effect.scheduler) {
       effect.scheduler();
