@@ -10,11 +10,13 @@ import { reactive } from './reactive';
 class RefImpl {
   private _value: any;
   private _rawValue: any;
+  private __v_isRef: boolean;
   public deps: any; //依赖存储
   constructor(value) {
     this._value = convert(value);
     this.deps = new Set();
     this._rawValue = value;
+    this.__v_isRef = true;
   }
   get value() {
     if (isTracking()) {
@@ -47,4 +49,19 @@ function convert(value) {
  */
 export function ref(value) {
   return new RefImpl(value);
+}
+/**
+ * @description: 检查某个值是否为 ref。
+ * @param {*} ref
+ */
+export function isRef(ref) {
+  return !!ref.__v_isRef;
+}
+/**
+ * @description: 如果参数是 ref，则返回内部值，否则返回参数本身。
+ * @param {*} ref
+ * @return {*}
+ */
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref;
 }
