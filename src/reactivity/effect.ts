@@ -7,7 +7,7 @@ let shouldTrack;
  * 1.run() 用于执行依赖函数
  * 2.stop() 用于删除某些属性的依赖
  */
-class ReactiveEffect {
+export class ReactiveEffect {
   private _fn: any;
   public deps: Array<any>;
   active = true;
