@@ -1,3 +1,8 @@
+/**
+ * @description:创建 组件 instance 对象
+ * @param {any} vnode
+ * @return {*}
+ */
 export function createComponentInstance(vnode: any) {
   const component = {
     vnode,
@@ -5,6 +10,11 @@ export function createComponentInstance(vnode: any) {
   };
   return component;
 }
+/**
+ * @description: 配置组件内容
+ * @param {*} instance
+ * @return {*}
+ */
 export function setupComponent(instance) {
   // TODO
   //initProps()
@@ -12,6 +22,7 @@ export function setupComponent(instance) {
 
   setupStatefulComponent(instance);
 }
+
 function setupStatefulComponent(instance: any) {
   const Component = instance.type;
 
