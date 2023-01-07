@@ -62,11 +62,23 @@ function mountElement(vnode: any, container: any) {
   container.append(el);
 }
 
+/**
+ * @description: 渲染子节点
+ * @param {*} vnode
+ * @param {*} container
+ * @return {*}
+ */
+function mountChildren(vnode, container) {
+  vnode.forEach((v) => {
+    patch(v, container);
+  });
+}
+
 function processComponent(vnode: any, container: any) {
   mountComponent(vnode, container);
 }
 /**
- * @description: 组件初始化
+ * @description: 组件初始化整体流程 1. 创建 2.设置 3.开始渲染
  * @param {any} vnode
  * @param {any} container
  * @return {*}
@@ -83,22 +95,12 @@ function mountComponent(vnode: any, container: any) {
  * @return {*}
  */
 function setupRenderEffect(instance: any, container: any) {
-  const subTree = instance.render();
+  const { proxy } = instance;
+  const subTree = instance.render.call(proxy);
+  console.log('%c Line:100 🍩 subTree', 'color:#42b983', subTree);
 
   //vnode->patch
   //vnode->element-mountElement
 
   patch(subTree, container);
-}
-
-/**
- * @description: 渲染子节点
- * @param {*} vnode
- * @param {*} container
- * @return {*}
- */
-function mountChildren(vnode, container) {
-  vnode.forEach((v) => {
-    patch(v, container);
-  });
 }

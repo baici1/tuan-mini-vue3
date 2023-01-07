@@ -6,7 +6,8 @@ export const App = {
       'div',
       { id: 'root', class: ['red', 'green'] },
       //'hi,mini-vue'
-      [h('p', { class: 'red' }, 'hi'), h('p', { class: 'green' }, 'mini-vue')]
+      // [h('p', { class: 'red' }, 'hi'), h('p', { class: 'green' }, 'mini-vue')]
+      'hi,' + this.msg
     );
   },
   setup() {

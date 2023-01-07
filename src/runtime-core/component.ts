@@ -7,11 +7,12 @@ export function createComponentInstance(vnode: any) {
   const component = {
     vnode,
     type: vnode.type,
+    setupState: {},
   };
   return component;
 }
 /**
- * @description: 配置组件内容
+ * @description: 初始化组件前期内容
  * @param {*} instance
  * @return {*}
  */
@@ -25,7 +26,17 @@ export function setupComponent(instance) {
 
 function setupStatefulComponent(instance: any) {
   const Component = instance.type;
-
+  instance.proxy = new Proxy(
+    {},
+    {
+      get(target, key) {
+        const { setupState } = instance;
+        if (key in setupState) {
+          return setupState[key];
+        }
+      },
+    }
+  );
   const { setup } = Component;
 
   if (setup) {
@@ -34,6 +45,12 @@ function setupStatefulComponent(instance: any) {
     handleSetupResult(instance, setupResult);
   }
 }
+/**
+ * @description: 处理 setup 内容
+ * @param {*} instance
+ * @param {any} setupResult
+ * @return {*}
+ */
 function handleSetupResult(instance, setupResult: any) {
   // TODO function
   if (typeof setupResult === 'object') {
@@ -41,7 +58,11 @@ function handleSetupResult(instance, setupResult: any) {
   }
   finishComponentSetup(instance);
 }
-
+/**
+ * @description: 结束组件设置，instance绑定render
+ * @param {any} instance
+ * @return {*}
+ */
 function finishComponentSetup(instance: any) {
   const Component = instance.type;
 
