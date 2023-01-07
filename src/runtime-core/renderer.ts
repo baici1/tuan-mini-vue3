@@ -37,14 +37,15 @@ function processElement(vnode: any, container: any) {
   mountElement(vnode, container);
 }
 /**
- * @description: 组件初始化，初始渲染
+ * @description: 渲染元素节点
  * @param {any} vnode
  * @param {any} container
  * @return {*}
  */
 function mountElement(vnode: any, container: any) {
   const el = document.createElement(vnode.type);
-
+  //存储元素节点的实例
+  vnode.el = el;
   //获取 虚拟节点 的子内容children和配置信息props
   const { props, children } = vnode;
   if (typeof children == 'string') {
@@ -83,10 +84,10 @@ function processComponent(vnode: any, container: any) {
  * @param {any} container
  * @return {*}
  */
-function mountComponent(vnode: any, container: any) {
-  const instance = createComponentInstance(vnode);
+function mountComponent(initialVNode: any, container: any) {
+  const instance = createComponentInstance(initialVNode);
   setupComponent(instance);
-  setupRenderEffect(instance, container);
+  setupRenderEffect(instance, initialVNode, container);
 }
 /**
  * @description: 准备渲染工作，调用生命周期
@@ -94,13 +95,14 @@ function mountComponent(vnode: any, container: any) {
  * @param {any} container
  * @return {*}
  */
-function setupRenderEffect(instance: any, container: any) {
+function setupRenderEffect(instance: any, initialVNode: any, container: any) {
   const { proxy } = instance;
   const subTree = instance.render.call(proxy);
   console.log('%c Line:100 🍩 subTree', 'color:#42b983', subTree);
 
   //vnode->patch
   //vnode->element-mountElement
-
   patch(subTree, container);
+
+  initialVNode.el = subTree.el;
 }

@@ -1,7 +1,8 @@
 import { h } from '../../lib/tuan-mini-vue3.esm.js';
-
+window.self = null;
 export const App = {
   render() {
+    window.self = this;
     return h(
       'div',
       { id: 'root', class: ['red', 'green'] },
