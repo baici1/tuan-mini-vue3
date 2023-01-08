@@ -60,7 +60,6 @@ function mountElement(vnode: any, container: any) {
   //添加属性
   for (const key in props) {
     const val = props[key];
-    console.log('%c Line:63 🥪 val', 'color:#fca650', val);
     // 开发思路：将具体的click操作重构成通用操作
     // if (key == 'onclick') {
     //   //注册事件监听器

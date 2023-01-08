@@ -1,3 +1,4 @@
+import { isObject } from './../shared/index';
 import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers';
 /**
  * @description: 某一个状态的标志
@@ -52,5 +53,9 @@ export function isProxy(value) {
  * @param {*} baseHandlers
  */
 function createActionObject(raw: any, baseHandlers) {
+  if (!isObject(raw)) {
+    console.warn(`target ${raw} must be object`);
+    return raw;
+  }
   return new Proxy(raw, baseHandlers);
 }
