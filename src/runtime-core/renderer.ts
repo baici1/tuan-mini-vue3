@@ -60,7 +60,24 @@ function mountElement(vnode: any, container: any) {
   //添加属性
   for (const key in props) {
     const val = props[key];
-    el.setAttribute(key, val);
+    console.log('%c Line:63 🥪 val', 'color:#fca650', val);
+    // 开发思路：将具体的click操作重构成通用操作
+    // if (key == 'onclick') {
+    //   //注册事件监听器
+    //   el.addEventListener('click', val);
+    // }
+    /**
+     * 制定规则：
+     * key：on+Event name
+     */
+    const isOn = (key: string) => /^on[A-Z]/.test(key);
+    if (isOn(key)) {
+      let event = key.slice(2).toLowerCase();
+      //注册事件监听器
+      el.addEventListener(event, val);
+    } else {
+      el.setAttribute(key, val);
+    }
   }
   container.append(el);
 }
