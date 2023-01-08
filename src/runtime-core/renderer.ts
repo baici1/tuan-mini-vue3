@@ -1,3 +1,4 @@
+import { ShapeFlags } from '../shared/shapeFlags';
 import { isObject } from './../shared/index';
 import { createComponentInstance, setupComponent } from './component';
 
@@ -17,17 +18,17 @@ export function render(vnode, container) {
  * @param {*} container 父节点
  */
 function patch(vnode, container) {
-  // TODO
   //判断vnode 是不是一个elmenet还是一个component，进行对应处理
   console.log(vnode.type);
   /**
    * component -> object
    * elmenet-> string
    */
-  if (typeof vnode.type == 'string') {
+  const { shapeFlag } = vnode;
+  if (shapeFlag & ShapeFlags.ELEMENT) {
     //处理元素
     processElement(vnode, container);
-  } else if (isObject(vnode.type)) {
+  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
     //处理组件
     processComponent(vnode, container);
   }
@@ -47,12 +48,13 @@ function mountElement(vnode: any, container: any) {
   //存储元素节点的实例
   vnode.el = el;
   //获取 虚拟节点 的子内容children和配置信息props
-  const { props, children } = vnode;
-  if (typeof children == 'string') {
+  const { props, children, shapeFlag } = vnode;
+  if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
     // ==渲染元素-> string 类型======================
     //当前节点添加内容
     el.textContent = children;
-  } else if (Array.isArray(children)) {
+  } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+    // ==渲染元素-> array 类型======================
     mountChildren(children, el);
   }
   //添加属性
