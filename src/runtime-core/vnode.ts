@@ -1,6 +1,7 @@
 import { ShapeFlags } from '../shared/shapeFlags';
 //自定义创建多个vnode节点类型，应用于不同场景
 export const Fragment = Symbol('Fragment');
+export const Text = Symbol('Text');
 
 export function createVNode(type, props?, children?) {
   const vnode = {
@@ -49,4 +50,12 @@ export function normalizeChildren(vnode, children) {
  */
 function getShapeFlag(type: any) {
   return typeof type == 'string' ? ShapeFlags.ELEMENT : ShapeFlags.STATEFUL_COMPONENT;
+}
+/**
+ * @description: 创建 text 类型的节点
+ * @param {string} text
+ * @return {*}
+ */
+export function createTextVNode(str: string) {
+  return createVNode(Text, {}, str);
 }

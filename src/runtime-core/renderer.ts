@@ -1,4 +1,4 @@
-import { Fragment } from './vnode';
+import { Fragment, Text } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
 import { createComponentInstance, setupComponent } from './component';
 
@@ -24,7 +24,7 @@ function patch(vnode, container) {
    * 增加节点类型
    * 1. Fragment 类型：只渲染子节点children
    * 体现：vue页面能够有多个根节点了等等
-   *
+   * 2. Text 类型：渲染一个文本节点
    * 默认：
    *  component -> object
    *  elmenet-> string
@@ -34,7 +34,9 @@ function patch(vnode, container) {
     case Fragment:
       processFragment(vnode, container);
       break;
-
+    case Text:
+      processText(vnode, container);
+      break;
     default:
       if (shapeFlag & ShapeFlags.ELEMENT) {
         //处理元素
@@ -45,6 +47,20 @@ function patch(vnode, container) {
       }
       break;
   }
+}
+
+/**
+ * @description: 渲染文本节点流程入口
+ * @param {any} vnode
+ * @param {any} container
+ * @return {*}
+ */
+function processText(vnode: any, container: any) {
+  //获取文本值
+  const { children } = vnode;
+  const el = document.createTextNode(children);
+  vnode.el = el;
+  container.append(el);
 }
 
 function processFragment(vnode: any, container: any) {
