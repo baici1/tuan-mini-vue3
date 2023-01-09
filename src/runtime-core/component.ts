@@ -2,6 +2,7 @@ import { shallowReadonly } from '../reactivity/reactive';
 import { emit } from './componentEmit';
 import { initProps } from './componentProps';
 import { PublicInstanceProxyHandlers } from './componentPublicInstance';
+import { initSlots } from './componentSlots';
 /**
  * @description:创建 组件 instance 对象
  * @param {any} vnode
@@ -13,11 +14,12 @@ export function createComponentInstance(vnode: any) {
     type: vnode.type,
     setupState: {},
     props: {},
+    slots: {},
     emit: () => {},
   };
   //组件挂载 emit
   /**
-   * 由于需要传递组件实例对象，但是用户使用则不需要，所以使用bind 提前传递组件实例对象参数
+   * 由于需要传递组件实例对象，但是用户使用则不需要，所以使用 bind 提前传递组件实例对象参数
    */
   component.emit = emit.bind(null, component) as any;
   return component;
@@ -28,9 +30,8 @@ export function createComponentInstance(vnode: any) {
  * @return {*}
  */
 export function setupComponent(instance) {
-  // TODO
   initProps(instance, instance.vnode.props);
-  //initSlots()
+  initSlots(instance, instance.vnode.children);
 
   setupStatefulComponent(instance);
 }
