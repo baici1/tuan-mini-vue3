@@ -29,6 +29,12 @@ export const Foo = {
      * 以上将所有功能点进行一个整合
      * slot形式就是一个函数
      *
+     * 优化点：
+     * 因为需要【单个vnode和多个vnode都支持】，属性children里面元素都是vnode节点，不能是数组
+     * 早期处理上采用：div 去进行包裹，最后形成一个vnode节点
+     * 其实结果不希望div进行渲染出来，只渲染子节点
+     *
+     * 可采用Fragment类型进行解决
      */
     const age = 18;
     return h('div', {}, [renderSlots(this.$slots, 'defult'), foo, renderSlots(this.$slots, 'header'), foo, renderSlots(this.$slots, 'ageSlot', { age }), foo]);

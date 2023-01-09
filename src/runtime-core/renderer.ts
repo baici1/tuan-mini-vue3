@@ -1,5 +1,5 @@
+import { Fragment } from './vnode';
 import { ShapeFlags } from '../shared/shapeFlags';
-import { isObject } from './../shared/index';
 import { createComponentInstance, setupComponent } from './component';
 
 /**
@@ -18,20 +18,38 @@ export function render(vnode, container) {
  * @param {*} container 父节点
  */
 function patch(vnode, container) {
-  //判断vnode 是不是一个elmenet还是一个component，进行对应处理
   console.log(vnode.type);
+  const { type, shapeFlag } = vnode;
   /**
-   * component -> object
-   * elmenet-> string
+   * 增加节点类型
+   * 1. Fragment 类型：只渲染子节点children
+   * 体现：vue页面能够有多个根节点了等等
+   *
+   * 默认：
+   *  component -> object
+   *  elmenet-> string
+   *
    */
-  const { shapeFlag } = vnode;
-  if (shapeFlag & ShapeFlags.ELEMENT) {
-    //处理元素
-    processElement(vnode, container);
-  } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-    //处理组件
-    processComponent(vnode, container);
+  switch (vnode.type) {
+    case Fragment:
+      processFragment(vnode, container);
+      break;
+
+    default:
+      if (shapeFlag & ShapeFlags.ELEMENT) {
+        //处理元素
+        processElement(vnode, container);
+      } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        //处理组件
+        processComponent(vnode, container);
+      }
+      break;
   }
+}
+
+function processFragment(vnode: any, container: any) {
+  //只渲染子节点
+  mountChildren(vnode.children, container);
 }
 
 function processElement(vnode: any, container: any) {

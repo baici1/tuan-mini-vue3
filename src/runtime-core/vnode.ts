@@ -1,4 +1,6 @@
 import { ShapeFlags } from '../shared/shapeFlags';
+//自定义创建多个vnode节点类型，应用于不同场景
+export const Fragment = Symbol('Fragment');
 
 export function createVNode(type, props?, children?) {
   const vnode = {
