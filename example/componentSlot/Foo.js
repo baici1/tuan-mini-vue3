@@ -1,7 +1,10 @@
-import { h, renderSlots } from '../../lib/tuan-mini-vue3.esm.js';
+import { h, renderSlots, getCurrentInstance } from '../../lib/tuan-mini-vue3.esm.js';
 
 export const Foo = {
-  setup() {},
+  setup() {
+    const instance = getCurrentInstance();
+    console.log('%c Line:6 🌶 instance', 'color:#6ec1c2', instance);
+  },
   render() {
     const foo = h('p', {}, 'foo');
     //$slots: 一个表示父组件所传入插槽的对象。

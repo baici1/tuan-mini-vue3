@@ -1,4 +1,4 @@
-import { h, createTextVNode } from '../../lib/tuan-mini-vue3.esm.js';
+import { h, createTextVNode, getCurrentInstance } from '../../lib/tuan-mini-vue3.esm.js';
 import { Foo } from './Foo.js';
 
 export const App = {
@@ -19,6 +19,8 @@ export const App = {
     return h('div', {}, [app, foo]);
   },
   setup() {
+    const instance = getCurrentInstance();
+    console.log('%c Line:23 🌮 instance', 'color:#fca650', instance);
     return {
       msg: 'mini-vue',
     };
