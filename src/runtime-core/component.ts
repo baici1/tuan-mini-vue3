@@ -8,13 +8,16 @@ import { initSlots } from './componentSlots';
  * @param {any} vnode
  * @return {*}
  */
-export function createComponentInstance(vnode: any) {
+export function createComponentInstance(vnode: any, parent: any) {
+  console.log('%c Line:12 🥤 parent', 'color:#4fff4B', parent);
   const component = {
     vnode,
     type: vnode.type,
     setupState: {},
     props: {},
     slots: {},
+    provides: parent ? parent.provides : {},
+    parent,
     emit: () => {},
   };
   //组件挂载 emit
@@ -76,7 +79,7 @@ function finishComponentSetup(instance: any) {
 
 let currentInstance = null;
 
-export function getCurrentInstance(instance) {
+export function getCurrentInstance() {
   return currentInstance;
 }
 
